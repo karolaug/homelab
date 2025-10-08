@@ -1,4 +1,4 @@
-COMPOSE=docker compose -f compose/ollama-openwebui.yml
+COMPOSE=docker-compose -f compose/ollama-webui.yml
 
 up:
 	$(COMPOSE) up -d

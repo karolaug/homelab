@@ -1,6 +1,8 @@
 services:
   ollama:
     image: ollama/ollama:latest
+    stdin_open: true
+    tty: true
     container_name: ${COMPOSE_PROJECT_NAME}-ollama
     environment:
       - TZ=${TIMEZONE}
