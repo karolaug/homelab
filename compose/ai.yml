@@ -19,12 +19,14 @@ services:
               count: all
               capabilities: [gpu]
     restart: unless-stopped
+    networks:
+      homelab:
+        aliases: [ollama]
 
   open-webui:
     image: ghcr.io/open-webui/open-webui:cuda
     container_name: ${COMPOSE_PROJECT_NAME}-openwebui
-    depends_on:
-      - ollama
+    depends_on: [ollama]
     environment:
       - TZ=${TIMEZONE}
       - OLLAMA_BASE_URL=http://ollama:11434
@@ -42,6 +44,9 @@ services:
               count: all
               capabilities: [gpu]
     restart: unless-stopped
+    networks:
+      homelab:
+        aliases: [open-webui]
 
   searxng:
     image: searxng/searxng:latest
@@ -54,46 +59,16 @@ services:
       - PORT=8080
       - LIMITER=false
     volumes:
-#      - ${DATA_ROOT}/searxng:/etc/searxng
-       - ../configs/searxng:/etc/searxng:ro
+      # - ${DATA_ROOT}/searxng:/etc/searxng
+      - ../configs/searxng:/etc/searxng:ro
     ports:
       - "127.0.0.1:8081:8080"
     restart: unless-stopped
+    networks:
+      homelab:
+        aliases: [searxng]
 
-  n8n:
-    image: n8nio/n8n:latest
-    container_name: ${COMPOSE_PROJECT_NAME}-n8n
-#    depends_on:
-#      - pgbouncer
-    environment:
-      - TZ=${TIMEZONE}
-      # ---- Web ----
-      - N8N_HOST=${N8N_HOST}
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=${N8N_PROTOCOL:-http}
-      - WEBHOOK_URL=${N8N_PROTOCOL:-http}://${N8N_HOST}:${N8N_EXTERNAL_PORT}
-      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
-      - N8N_LOG_LEVEL=${N8N_LOG_LEVEL:-info}
-      - N8N_SECURE_COOKIE=${N8N_SECURE_COOKIE:-true}
-      # ---- DB via PgBouncer ----
-      #- DB_TYPE=postgresdb
-      #- DB_POSTGRESDB_HOST=${N8N_DB_HOST:-pgbouncer}
-      #- DB_POSTGRESDB_PORT=${N8N_DB_PORT:-6432}
-      #- DB_POSTGRESDB_DATABASE=${N8N_DB_NAME:-n8n}
-      #- DB_POSTGRESDB_USER=${N8N_DB_USER:-n8n}
-      #- DB_POSTGRESDB_PASSWORD=${N8N_DB_PASSWORD}
-      # ---- Executions ----
-      - EXECUTIONS_MODE=${N8N_EXECUTIONS_MODE:-regular}   # set to "queue" when using the queue profile
-      # ---- Redis (only used in queue mode) ----
-      #- QUEUE_BULL_REDIS_HOST=redis
-      #- QUEUE_BULL_REDIS_PORT=6379
-    volumes:
-      - ${DATA_ROOT}/n8n:/home/node/.n8n
-    ports:
-      - "${N8N_EXTERNAL_PORT:-5678}:5678"
-    healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:5678/healthz"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
+networks:
+  homelab:
+    name: homelab
+    external: true
