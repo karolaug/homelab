@@ -1,6 +1,6 @@
 services:
   sim:
-    image: ghcr.io/simstudioai/sim:latest
+    image: ghcr.io/simstudioai/simstudio:latest
     container_name: ${COMPOSE_PROJECT_NAME}-sim
     environment:
       - TZ=${TIMEZONE}
@@ -18,6 +18,10 @@ services:
     ports:
       - "${SIM_PORT:-3000}:3000"
     restart: unless-stopped
+    networks:
+      homelab:
+        aliases: [simstudio]
+
 
   realtime:
     image: ghcr.io/simstudioai/realtime:latest
@@ -30,6 +34,12 @@ services:
     ports:
       - "${SIM_REALTIME_PORT:-3010}:3010"
     restart: unless-stopped
+    networks:
+      homelab:
+        aliases: [realtime]
+
+
+
 networks:
   homelab:
     name: homelab
