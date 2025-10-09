@@ -28,6 +28,8 @@ services:
     environment:
       - TZ=${TIMEZONE}
       - OLLAMA_BASE_URL=http://ollama:11434
+      - SEARCH_PROVIDER_URL=http://searxng:8080
+      - SEARCH_ENABLED=true
     volumes:
       - ${DATA_ROOT}/openwebui:/app/backend/data
     ports:
@@ -39,4 +41,20 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+    restart: unless-stopped
+
+  searxng:
+    image: searxng/searxng:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-searxng
+    environment:
+      - TZ=${TIMEZONE}
+      - BASE_URL=http://localhost:8081
+      - SEARXNG_SECRET=${SEARXNG_SECRET:-changeme}
+      - BIND_ADDRESS=0.0.0.0
+      - PORT=8080
+      - LIMITER=false
+    volumes:
+      - ${DATA_ROOT}/searxng:/etc/searxng
+    ports:
+      - "127.0.0.1:8081:8080"
     restart: unless-stopped

@@ -1,0 +1,7 @@
+use_default_settings: true
+server:
+  bind_address: "0.0.0.0"
+search:
+  formats: [html, json]  # json is required
+outgoing:
+  enable_http: true      # if you query non-HTTPS engines
