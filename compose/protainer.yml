@@ -1,0 +1,14 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:lts
+    container_name: ${COMPOSE_PROJECT_NAME}-portainer
+    environment:
+      - TZ=${TIMEZONE}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DATA_ROOT}/portainer:/data
+    ports:
+      - "${PORTAINER_HTTPS_PORT:-9443}:9443"   # UI (HTTPS, default)
+      # - "${PORTAINER_EDGE_PORT:-8000}:8000"  # TCP tunnel for Edge agents (optional)
+      # - "${PORTAINER_HTTP_PORT:-9000}:9000"  # Legacy HTTP (optional)
+    restart: unless-stopped
