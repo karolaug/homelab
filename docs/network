@@ -1,0 +1,36 @@
+Networks:
+
+IoT VLAN:
+    - homeassistant
+
+NVR VLAN:
+    - cameras
+    - NVR 1G connection
+
+internal_services VLAN:
+   - proxy
+   - NAS
+   - SERVER
+   - NVR 10G connection
+
+nzb VLAN:
+   - sonarr
+   - radarr
+   - nzbhydra
+   - lidarr
+   - sabnzbd
+
+services VLAN:
+   - n8n
+   - oolama
+   - webui
+
+nzb: INTERNAL
+   + sonarr
+   + radarr
+   + nzbhydra
+   + lidarr
+   + sabnzbd
+   + proxy
+   + n8n
+   + homeassistant?
